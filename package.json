@@ -1,0 +1,32 @@
+{
+  "name": "embedded-js-widget",
+  "version": "1.0.0",
+  "description": "Building an embedded widget using [RequireJS](http://requirejs.org) and [Ractive.js](http://ractivejs.org).",
+  "main": "config.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {
+    "almond": "^0.3.3",
+    "jquery": "^3.3.1",
+    "ractive": "^0.10.3",
+    "requirejs": "^2.3.5",
+    "requirejs-text": "^2.0.15",
+    "rv": "^0.1.8",
+    "rvc": "^0.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsileo/embedded-js-widget.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsileo/embedded-js-widget/issues"
+  },
+  "homepage": "https://github.com/tsileo/embedded-js-widget#readme"
+}
