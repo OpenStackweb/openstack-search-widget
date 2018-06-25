@@ -1,10 +1,20 @@
-@import cleanslate.css;
+.search-bar-wrapper {
+	position: relative;
+}
 
-#myWidget .mw-wrapper {
-	width: 220px !important;
-	color: #eee !important;
-	background: #333 !important;
-	border: 1px solid #444 !important;
-	padding: 5px !important;
-	border-radius: 5px !important;
+.search-bar-input {
+	width: 100%;
+	border: 2px solid #dae5ee;
+	border-radius: 4px;
+	height: 37px;
+	padding: 0 0 0 10px;
+	background: #fff;
+}
+
+.search-bar-close {
+	position: absolute;
+	top: 12px;
+	color: #dae5ee;
+	z-index: 1001;
+	font-size: 16px;
 }

@@ -7,11 +7,13 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/my-widget.css'],
 
     var $style = $("<style></style>", {type: "text/css"});
     $style.text(css);
-    $("head").append($style);
-    
+    $("head")
+        .append($style)
+        .append('<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" >');
+
       // render our main view
       this.ractive = new Ractive({
-        el: 'myWidget',
+        el: 'openstack-search-bar',
         template: mainTemplate,
         data: {
           cnt: 0,
