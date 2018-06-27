@@ -106,7 +106,7 @@
 }
 
 .search-results {
-	display: none;
+	display: block;
 }
 
 .search-results .overlay {

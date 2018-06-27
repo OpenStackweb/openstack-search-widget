@@ -5,30 +5,15 @@
     </div>
     <div class="search-suggestions">
         <div class="results">
-            <a href="http://www.google.com" class="result-item" >
-                <span class="result-heading">
-                    heat output-show my-<em>kube</em>-cluster <em>kube_minions_external</em> is not working in my...
-                </span>
+            {{#results}}
+            <a href="{{link}}" class="result-item" >
+                <span class="result-heading"> {{{title}}} </span>
                 <br/>
-                <span class="result-detail">
-                   First time here? Check out the FAQ! Chinese English ▼ Hi there! Please sign in tags users badges help...
-                </span>
+                <span class="result-detail"> {{{detail}}} </span>
             </a>
+            {{/}}
         </div>
     </div>
-    <div class="search-results" style="display: none">
-        <div class="results">
-            <a href="http://www.google.com" class="result-item" >
-                <span class="result-heading">
-                    heat output-show my-<em>kube</em>-cluster <em>kube_minions_external</em> is not working in my environment. - Ask OpenStack: Q&amp;A Site for OpenStack Users and Developers
-                </span>
-                <span class="result-detail">
-                   First time here? Check out the FAQ! Chinese English ▼ Hi there! Please sign in tags users badges help...
-                </span>
-            </a>
-        </div>
-    </div>
-
 
     <div class="search-results">
         <div class="overlay"></div>
@@ -49,29 +34,25 @@
                 <section class="suggestions-wrapper" data-st-target-element="#st-overlay-search-input" data-st-active-query-class="active" style="display: none;">
                     <span class="heading">suggested results</span>
                     <div class="suggestions">
-                        <a href="http://www.google.com" class="result-item" >
-                            <span class="result-heading">
-                                heat output-show my-<em>kube</em>-cluster <em>kube_minions_external</em>
-                            </span>
+                        {{#results}}
+                        <a href="{{link}}" class="result-item" >
+                            <span class="result-heading"> {{{title}}} </span>
                             <br/>
-                            <span class="result-detail">
-                               First time here? Check out the FAQ! Chinese English ▼ Hi there! Please sign in tags users badges help...
-                            </span>
+                            <span class="result-detail"> {{{detail}}} </span>
                         </a>
+                        {{/}}
                     </div>
                 </section>
 
                 <section class="results-wrapper">
                     <div class="results" style="display: block;">
-                        <a href="http://www.google.com" class="result-item" >
-                            <span class="result-heading">
-                                heat output-show my-<em>kube</em>-cluster <em>kube_minions_external</em> is not working in my ...
-                            </span>
+                        {{#results}}
+                        <a href="{{link}}" class="result-item" >
+                            <span class="result-heading"> {{{title}}} </span>
                             <br/>
-                            <span class="result-detail">
-                                First time here? Check out the FAQ! Chinese English ▼ Hi there! Please sign in tags users badges help...
-                            </span>
+                            <span class="result-detail"> {{{detail}}} </span>
                         </a>
+                        {{/}}
                     </div>
                 </section>
             </div>
@@ -82,21 +63,21 @@
                 <section class="footer">
                     <span class="summary">
                         <div>
-                            Showing <strong>1</strong>–<strong>10</strong> of <strong>1884</strong>
-                            <span class="st-ui-search-summary-query"> for “kuber” </span>
+                            Showing <strong>{{fromResult}}</strong>–<strong>{{toResult}}</strong> of <strong>{{total}}</strong>
+                            <span class="st-ui-search-summary-query"> for “{{term}}” </span>
 
                         </div>
                     </span>
                     <span class="pagination">
                         <div>
-                            <a class="page-link active" data-st-page="1" href="#">1</a>
-                            <a class="page-link" data-st-page="2" href="#">2</a>
-                            <a class="page-link" data-st-page="3" href="#">3</a>
-                            <a class="page-link" data-st-page="4" href="#">4</a>
-                            <a class="page-link" data-st-page="5" href="#">5</a>
-                            <a class="page-link next" data-st-page="2" href="#">
+                            {{#each pagesToShow }}
+                                <a class="page-link {{# this == page}} active {{/}}" on-click="['changePage', this]" href="#">{{ this }}</a>
+                            {{/each}}
+                            {{# totalPages > 5}}
+                            <a class="page-link next" href="#">
                               next <span class="right-arrow"> > </span>
                             </a>
+                            {{/}}
                         </div>
                     </span>
                 </section>
