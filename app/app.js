@@ -24,14 +24,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     fromResult: 1,
                     toResult: 10,
                     total: 88,
-                    results: [
-                        {
-                            link: 'http://google.com',
-                            title: 'heat output-show my-<em>kube</em>-cluster <em>kube_minions_external</em>',
-                            detail: 'First time here? Check out the FAQ! Chinese English ▼ Hi there! Please sign in tags users badges help...'
-                        },
-
-                    ]
+                    results: [],
+                    suggestions: []
                 }
             });
 
@@ -42,64 +36,41 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                 },
                 search: function(ev) {
                     let term = this.get('term');
+                    let that = this;
                     ev.original.preventDefault();
+
                     if(ev.original.keyCode == 13) {
+                        doSearch(that, term);
                         $('.search-results').show();
                     } else {
-                        window.setTimeout(doSearch, 500, term);
+                        window.setTimeout(doSuggestions, 500, that, term);
                     }
                 },
                 searchPopup: function(ev) {
                     let term = this.get('term');
-                    ev.original.preventDefault();
+                    let that = this;
 
+                    ev.original.preventDefault();
                     $('.suggestions-wrapper').show();
 
                     if(ev.original.keyCode == 13) {
+                        doSearch(that, term);
                         $('.suggestions-wrapper').hide();
                     } else {
-                        window.setTimeout(doSearch, 500, term);
+                        window.setTimeout(doSuggestions, 500, that, term);
                     }
                 },
                 closePopup: function(ev) {
                     $('.search-results').hide();
                 },
                 changePage: function(ev, newPage) {
-                    let {pagesToShow, perPage, total} = this.get();
-                    let lastPage = pagesToShow[pagesToShow.length - 1];
-                    let firstPage = pagesToShow[0];
+                    let {perPage, total} = this.get();
                     let totalPages = Math.ceil(total / perPage);
-                    let newPagesToShow = [];
-
-                    if (newPage > totalPages || newPage < 1) return false;
 
                     ev.original.preventDefault();
-                    this.set('page', newPage);
+                    if (newPage > totalPages || newPage < 1) return false;
 
-                    // change results
-                    let newResultLimit = (newPage * perPage);
-                    newResultLimit = (newResultLimit > total) ? total : newResultLimit;
-                    this.set('fromResult', ((newPage - 1) * perPage) + 1);
-                    this.set('toResult', newResultLimit);
-
-                    // change pagination
-                    if (newPage > lastPage - 2 || newPage < firstPage + 2) {
-                        let pageFrom = newPage - 2;
-                        let pageTo = newPage + 2;
-
-                        if (pageTo > totalPages) {
-                            pageTo = totalPages;
-                            pageFrom = pageTo - 4;
-                        } else if (pageFrom < 1) {
-                            pageFrom = 1;
-                            pageTo = 5;
-                        }
-
-                        for( var i = pageFrom; i <= pageTo; i++) {
-                            newPagesToShow.push(i);
-                        }
-                        this.set('pagesToShow', newPagesToShow);
-                    }
+                    changePagination(that);
                 }
             });
 
@@ -107,8 +78,90 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         }
     };
 
-    function doSearch(term) {
-        console.log('search: '+term);
+    function doSearch(that, term) {
+        $.ajax({
+            url: `https://devbranch.search.openstack.org/api/public/v1/search/www-openstack/${term}`,
+            dataType: "json"
+        }).then(function(resp) {
+            let results = resp.results.map(r => {
+                let term_idx = r.content.toLowerCase().indexOf(term.toLowerCase());
+                let detail = '...' + r.content.slice(term_idx - 40, term_idx + 40) + '...';
+
+                return {link: r.url, title: r.title, detail: detail};
+            });
+
+            that.set('total', resp.qty);
+            that.set('results', results);
+            resetPagination(that);
+
+        }, function(resp) {
+            alert('error');
+        });
+    }
+
+    function doSuggestions(that, term) {
+        $.ajax({
+            url: `https://devbranch.search.openstack.org/api/public/v1/suggestions/www-openstack/${term}`,
+            dataType: "json"
+        }).then(function(resp) {
+            let results = resp.results.map(r => {
+                return {link: r.payload, title: r.term};
+            });
+
+            that.set('suggestions', results);
+        }, function(resp) {
+            alert('error');
+        });
+    }
+
+    function resetPagination(that) {
+        let {perPage, total} = that.get();
+        let totalPages = Math.ceil(total / perPage);
+        let lastPage = (totalPages < 5) ? totalPages : 5;
+        let newPagesToShow = [];
+
+        for( var i = 1; i <= lastPage; i++) {
+            newPagesToShow.push(i);
+        }
+
+        that.set('page', 1);
+        that.set('pagesToShow', newPagesToShow);
+    }
+
+    function changePagination(that, newPage) {
+        let {pagesToShow, perPage, total} = that.get();
+        let lastPage = pagesToShow[pagesToShow.length - 1];
+        let firstPage = pagesToShow[0];
+        let totalPages = Math.ceil(total / perPage);
+        let newPagesToShow = [];
+
+        this.set('page', newPage);
+
+        // change results
+        let newResultLimit = (newPage * perPage);
+        newResultLimit = (newResultLimit > total) ? total : newResultLimit;
+        that.set('fromResult', ((newPage - 1) * perPage) + 1);
+        that.set('toResult', newResultLimit);
+
+        // change pagination
+        if (newPage > lastPage - 2 || newPage < firstPage + 2) {
+            let pageFrom = newPage - 2;
+            let pageTo = newPage + 2;
+            newPagesToShow = []
+
+            if (pageTo > totalPages) {
+                pageTo = totalPages;
+            }
+            if (pageFrom < 1) {
+                pageFrom = 1;
+            }
+
+            for( var i = pageFrom; i <= pageTo; i++) {
+                newPagesToShow.push(i);
+            }
+
+            that.set('pagesToShow', newPagesToShow);
+        }
     }
 
     return app;

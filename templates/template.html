@@ -5,11 +5,9 @@
     </div>
     <div class="search-suggestions">
         <div class="results">
-            {{#results}}
+            {{#suggestions}}
             <a href="{{link}}" class="result-item" >
                 <span class="result-heading"> {{{title}}} </span>
-                <br/>
-                <span class="result-detail"> {{{detail}}} </span>
             </a>
             {{/}}
         </div>
@@ -32,11 +30,9 @@
                 <section class="suggestions-wrapper" style="display: none;">
                     <span class="heading">suggested results</span>
                     <div class="suggestions">
-                        {{#results}}
+                        {{#suggestions}}
                         <a href="{{link}}" class="result-item" >
                             <span class="result-heading"> {{{title}}} </span>
-                            <br/>
-                            <span class="result-detail"> {{{detail}}} </span>
                         </a>
                         {{/}}
                     </div>

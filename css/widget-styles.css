@@ -39,7 +39,7 @@
 }
 
 .result-item:before{
-	right:2px;
+	right:22px;
 	top:50%;
 	margin-top:-3px;
 	width:6px;
@@ -238,7 +238,7 @@
 	top: 0;
 	left: 0;
 	margin: 0;
-	padding: 68px 36px;
+	padding: 68px 10px;
 	width: 50%;
 	height: 100%;
 	z-index: 99999995;
@@ -262,14 +262,15 @@
 	margin-bottom: 0;
 	padding: 6px 18px 14px 0;
 	border-bottom: 1px solid #E9EDF2;
+	color: rgba(0,0,0,0.4);
 }
 
 .search-results .results-wrapper {
 	position: absolute;
 	top: 0;
 	left: 0;
-	padding: 68px 25px;
-	/*width: 100%;*/
+	padding: 50px 0px;
+	width: 100%;
 	height: 100%;
 	overflow: scroll;
 	-webkit-overflow-scrolling: touch;
