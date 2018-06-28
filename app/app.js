@@ -1,4 +1,4 @@
-define(['jquery', 'ractive', 'rv!templates/template', 'text!css/my-widget.css'], function ($, Ractive, mainTemplate, css) {
+define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.css'], function ($, Ractive, mainTemplate, css) {
 
     'use strict';
 
@@ -20,11 +20,10 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/my-widget.css'],
                     term: '',
                     page: 1,
                     perPage: 10,
-                    totalPages: 15,
                     pagesToShow: [1,2,3,4,5],
                     fromResult: 1,
                     toResult: 10,
-                    total: 300,
+                    total: 88,
                     results: [
                         {
                             link: 'http://google.com',
@@ -50,34 +49,53 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/my-widget.css'],
                         window.setTimeout(doSearch, 500, term);
                     }
                 },
+                searchPopup: function(ev) {
+                    let term = this.get('term');
+                    ev.original.preventDefault();
+
+                    $('.suggestions-wrapper').show();
+
+                    if(ev.original.keyCode == 13) {
+                        $('.suggestions-wrapper').hide();
+                    } else {
+                        window.setTimeout(doSearch, 500, term);
+                    }
+                },
                 closePopup: function(ev) {
                     $('.search-results').hide();
                 },
                 changePage: function(ev, newPage) {
-                    let {pagesToShow, totalPages, perPage, total} = this.get();
+                    let {pagesToShow, perPage, total} = this.get();
                     let lastPage = pagesToShow[pagesToShow.length - 1];
+                    let firstPage = pagesToShow[0];
+                    let totalPages = Math.ceil(total / perPage);
+                    let newPagesToShow = [];
+
+                    if (newPage > totalPages || newPage < 1) return false;
 
                     ev.original.preventDefault();
                     this.set('page', newPage);
 
                     // change results
-                    let newResultLimit = (newPage * perPage) + perPage;
+                    let newResultLimit = (newPage * perPage);
                     newResultLimit = (newResultLimit > total) ? total : newResultLimit;
-                    this.set('fromResult', (newPage * perPage));
+                    this.set('fromResult', ((newPage - 1) * perPage) + 1);
                     this.set('toResult', newResultLimit);
 
                     // change pagination
-                    if (newPage > lastPage - 2) {
-                        let newPagesToShow = [];
+                    if (newPage > lastPage - 2 || newPage < firstPage + 2) {
                         let pageFrom = newPage - 2;
                         let pageTo = newPage + 2;
 
                         if (pageTo > totalPages) {
-                          pageTo = totalPages;
-                          pageFrom = pageTo - 5;
+                            pageTo = totalPages;
+                            pageFrom = pageTo - 4;
+                        } else if (pageFrom < 1) {
+                            pageFrom = 1;
+                            pageTo = 5;
                         }
 
-                        for( var i = pageFrom; i < pageTo; i++) {
+                        for( var i = pageFrom; i <= pageTo; i++) {
                             newPagesToShow.push(i);
                         }
                         this.set('pagesToShow', newPagesToShow);
@@ -90,7 +108,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/my-widget.css'],
     };
 
     function doSearch(term) {
-        alert(term);
+        console.log('search: '+term);
     }
 
     return app;

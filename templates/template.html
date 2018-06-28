@@ -21,9 +21,7 @@
             <!-- HEADER -->
             <div class="header-wrapper">
                 <section class="header st-ui-header">
-                    <form>
-                        <input value="{{term}}" type="text" placeholder="Search OpenStack" id="search-popup-input" >
-                    </form>
+                    <input value="{{term}}" on-keyup="searchPopup" type="text" placeholder="Search OpenStack" id="search-popup-input" >
                     <span class="search-icon"><i class="fa fa-search"></i></span>
                     <a class="close-icon" on-click="closePopup"><i class="fa fa-times"></i></a>
                 </section>
@@ -31,7 +29,7 @@
 
             <!-- PRIMARY CONTENT -->
             <div>
-                <section class="suggestions-wrapper" data-st-target-element="#st-overlay-search-input" data-st-active-query-class="active" style="display: none;">
+                <section class="suggestions-wrapper" style="display: none;">
                     <span class="heading">suggested results</span>
                     <div class="suggestions">
                         {{#results}}
@@ -70,14 +68,15 @@
                     </span>
                     <span class="pagination">
                         <div>
+                            <a on-click="['changePage', page - 1]" class="page-link next" href="#">
+                              <span class="right-arrow"> &lt; </span>
+                            </a>
                             {{#each pagesToShow }}
                                 <a class="page-link {{# this == page}} active {{/}}" on-click="['changePage', this]" href="#">{{ this }}</a>
                             {{/each}}
-                            {{# totalPages > 5}}
-                            <a class="page-link next" href="#">
-                              next <span class="right-arrow"> > </span>
+                            <a on-click="['changePage', page + 1]" class="page-link next" href="#">
+                              <span class="right-arrow"> &gt; </span>
                             </a>
-                            {{/}}
                         </div>
                     </span>
                 </section>
