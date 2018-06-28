@@ -1,7 +1,7 @@
 {
-  "name": "embedded-js-widget",
+  "name": "openstack-search-widget",
   "version": "1.0.0",
-  "description": "Building an embedded widget using [RequireJS](http://requirejs.org) and [Ractive.js](http://ractivejs.org).",
+  "description": "Embedded widget for openstack search.",
   "main": "config.js",
   "directories": {
     "example": "example"
@@ -21,12 +21,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tsileo/embedded-js-widget.git"
+    "url": "git+https://github.com/OpenStackweb/openstack-search-widget.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tsileo/embedded-js-widget/issues"
+    "url": "https://github.com/OpenStackweb/openstack-search-widget/issues"
   },
-  "homepage": "https://github.com/tsileo/embedded-js-widget#readme"
+  "homepage": "https://github.com/OpenStackweb/openstack-search-widget#readme"
 }
