@@ -1,50 +1,51 @@
-<div class="search-wrapper">
-    <div class="search-bar-wrapper">
+<div class="ossw-search-wrapper">
+    <div class="ossw-search-bar-wrapper">
         <input value="{{term}}" on-keyup="search" type="text" id="search-bar-input" placeholder="Search OpenStack" />
-        <i class="fa fa-times search-bar-close" on-click="clear"></i>
+        <i class="fa fa-times ossw-search-bar-close" on-click="clear"></i>
     </div>
-    <div class="search-suggestions">
-        <div class="results">
+    {{#if suggestions.length}}
+    <div class="ossw-search-suggestions">
+        <div class="ossw-results">
             {{#suggestions}}
-            <a href="{{link}}" class="result-item" >
-                <span class="result-heading"> {{{title}}} </span>
+            <a href="{{link}}" class="ossw-result-item" >
+                <div class="ossw-result-heading"> {{{title}}} </div>
             </a>
             {{/}}
         </div>
     </div>
+    {{/if}}
 
-    <div class="search-results">
-        <div class="overlay"></div>
-        <div class="container">
+    <div class="ossw-search-results">
+        <div class="ossw-overlay"></div>
+        <div class="ossw-container">
             <!-- HEADER -->
-            <div class="header-wrapper">
-                <section class="header st-ui-header">
+            <div class="ossw-header-wrapper">
+                <section class="ossw-header">
                     <input value="{{term}}" on-keyup="searchPopup" type="text" placeholder="Search OpenStack" id="search-popup-input" >
-                    <span class="search-icon"><i class="fa fa-search"></i></span>
-                    <a class="close-icon" on-click="closePopup"><i class="fa fa-times"></i></a>
+                    <span class="ossw-search-icon"><i class="fa fa-search"></i></span>
+                    <a class="ossw-close-icon" on-click="closePopup"><i class="fa fa-times"></i></a>
                 </section>
             </div>
 
             <!-- PRIMARY CONTENT -->
             <div>
-                <section class="suggestions-wrapper" style="display: none;">
-                    <span class="heading">suggested results</span>
-                    <div class="suggestions">
+                <section class="ossw-suggestions-wrapper" style="display: none;">
+                    <div class="ossw-heading">suggested results</div>
+                    <div class="ossw-suggestions">
                         {{#suggestions}}
-                        <a href="{{link}}" class="result-item" >
-                            <span class="result-heading"> {{{title}}} </span>
+                        <a href="{{link}}" class="ossw-result-item" >
+                            <div class="ossw-result-heading"> {{{title}}} </div>
                         </a>
                         {{/}}
                     </div>
                 </section>
 
-                <section class="results-wrapper">
-                    <div class="results" style="display: block;">
+                <section class="ossw-results-wrapper">
+                    <div class="ossw-results" style="display: block;">
                         {{#results}}
-                        <a href="{{link}}" class="result-item" >
-                            <span class="result-heading"> {{{title}}} </span>
-                            <br/>
-                            <span class="result-detail"> {{{detail}}} </span>
+                        <a href="{{link}}" class="ossw-result-item" >
+                            <div class="ossw-result-heading"> {{{title}}} </div>
+                            <div class="ossw-result-detail"> {{{detail}}} </div>
                         </a>
                         {{/}}
                     </div>
@@ -53,25 +54,25 @@
 
 
             <!-- FOOTER -->
-            <div class="footer-wrapper">
-                <section class="footer">
-                    <span class="summary">
+            <div class="ossw-footer-wrapper">
+                <section class="ossw-footer">
+                    <span class="ossw-summary">
                         <div>
                             Showing <strong>{{fromResult}}</strong>–<strong>{{toResult}}</strong> of <strong>{{total}}</strong>
-                            <span class="st-ui-search-summary-query"> for “{{term}}” </span>
+                            <span class="ossw-summary-query"> for “{{term}}” </span>
 
                         </div>
                     </span>
-                    <span class="pagination">
+                    <span class="ossw-pagination">
                         <div>
-                            <a on-click="['changePage', page - 1]" class="page-link next" href="#">
-                              <span class="right-arrow"> &lt; </span>
+                            <a on-click="['changePage', page - 1]" class="ossw-page-link next" href="#">
+                              <span class="ossw-right-arrow"> &lt; </span>
                             </a>
                             {{#each pagesToShow }}
-                                <a class="page-link {{# this == page}} active {{/}}" on-click="['changePage', this]" href="#">{{ this }}</a>
+                                <a class="ossw-page-link {{# this == page}} active {{/}}" on-click="['changePage', this]" href="#">{{ this }}</a>
                             {{/each}}
-                            <a on-click="['changePage', page + 1]" class="page-link next" href="#">
-                              <span class="right-arrow"> &gt; </span>
+                            <a on-click="['changePage', page + 1]" class="ossw-page-link next" href="#">
+                              <span class="ossw-right-arrow"> &gt; </span>
                             </a>
                         </div>
                     </span>

@@ -41,7 +41,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
                     if(ev.original.keyCode == 13) {
                         doSearch(that, term);
-                        $('.search-results').show();
+                        $('.ossw-search-results').show();
                     } else {
                         window.setTimeout(doSuggestions, 500, that, term);
                     }
@@ -51,17 +51,17 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     let that = this;
 
                     ev.original.preventDefault();
-                    $('.suggestions-wrapper').show();
+                    $('.ossw-suggestions-wrapper').show();
 
                     if(ev.original.keyCode == 13) {
                         doSearch(that, term);
-                        $('.suggestions-wrapper').hide();
+                        $('.ossw-suggestions-wrapper').hide();
                     } else {
                         window.setTimeout(doSuggestions, 500, that, term);
                     }
                 },
                 closePopup: function(ev) {
-                    $('.search-results').hide();
+                    $('.ossw-search-results').hide();
                 },
                 changePage: function(ev, newPage) {
                     let {perPage, total} = this.get();
@@ -95,7 +95,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             resetPagination(that);
 
         }, function(resp) {
-            alert('error');
+            // error response
         });
     }
 
@@ -110,7 +110,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
             that.set('suggestions', results);
         }, function(resp) {
-            alert('error');
+            // error response
         });
     }
 
