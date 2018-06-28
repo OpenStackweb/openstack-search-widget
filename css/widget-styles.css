@@ -4,7 +4,7 @@
 }
 
 #search-bar-input {
-	width: 97%;
+	width: 100%;
 	border: 2px solid #dae5ee;
 	border-radius: 4px;
 	height: 37px;
@@ -16,7 +16,7 @@
 	cursor:	pointer;
 	position: absolute;
 	top: 10px;
-	right: 3%;
+	right: 15px;
 	color: #dae5ee;
 	z-index: 1001;
 	font-size: 16px;
