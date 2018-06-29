@@ -2,8 +2,11 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
     'use strict';
 
-    var app = {
-        init: function () {
+    var search_widget = {
+        init: function (baseUrl, context) {
+
+            baseUrl = baseUrl ? baseUrl : 'devbranch.search.openstack.org';
+            context = context ? context : 'www-openstack';
 
             var $style = $("<style></style>", {type: "text/css"});
             $style.text(css);
@@ -15,6 +18,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             // render our main view
             this.ractive = new Ractive({
                 el: 'openstack-search-bar',
+                baseUrl: baseUrl,
+                context: context,
                 template: mainTemplate,
                 data: {
                     term: '',
@@ -35,42 +40,46 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     this.set('term', '');
                 },
                 search: function(ev) {
-                    let term = this.get('term');
-                    let that = this;
+                    var term = this.get('term');
+                    var that = this;
                     ev.original.preventDefault();
 
                     if(ev.original.keyCode == 13) {
-                        doSearch(that, term);
+                        doSearch(that);
                         $('.ossw-search-results').show();
+                        $('.ossw-search-suggestions').hide();
+                        $('.ossw-suggestions-wrapper').hide();
                     } else {
-                        window.setTimeout(doSuggestions, 500, that, term);
+                        window.setTimeout(doSuggestions, 500, that);
                     }
                 },
                 searchPopup: function(ev) {
-                    let term = this.get('term');
-                    let that = this;
+                    var term = this.get('term');
+                    var that = this;
 
                     ev.original.preventDefault();
                     $('.ossw-suggestions-wrapper').show();
 
                     if(ev.original.keyCode == 13) {
-                        doSearch(that, term);
+                        doSearch(that);
                         $('.ossw-suggestions-wrapper').hide();
                     } else {
-                        window.setTimeout(doSuggestions, 500, that, term);
+                        window.setTimeout(doSuggestions, 500, that);
                     }
                 },
                 closePopup: function(ev) {
                     $('.ossw-search-results').hide();
                 },
                 changePage: function(ev, newPage) {
-                    let {perPage, total} = this.get();
-                    let totalPages = Math.ceil(total / perPage);
+                    var total = this.get('total');
+                    var perPage = this.get('perPage');
+                    var totalPages = Math.ceil(total / perPage);
 
                     ev.original.preventDefault();
                     if (newPage > totalPages || newPage < 1) return false;
 
                     changePagination(that);
+                    doSearch(that);
                 }
             });
 
@@ -78,14 +87,19 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         }
     };
 
-    function doSearch(that, term) {
+    function doSearch(that) {
+        var term = that.get('term');
+        var page = that.get('page');
+        var perPage = that.get('perPage');
+        var url = 'https://'+that.baseUrl+'/api/public/v1/search/'+that.context;
+
         $.ajax({
-            url: `https://devbranch.search.openstack.org/api/public/v1/search/www-openstack/${term}`,
+            url: url + '/'+term+'?page='+page+'&page_size='+perPage,
             dataType: "json"
-        }).then(function(resp) {
-            let results = resp.results.map(r => {
-                let term_idx = r.content.toLowerCase().indexOf(term.toLowerCase());
-                let detail = '...' + r.content.slice(term_idx - 40, term_idx + 40) + '...';
+        }).done(function(resp) {
+            var results = resp.results.map(function(r) {
+                var term_idx = r.content.toLowerCase().indexOf(term.toLowerCase());
+                var detail = '...' + r.content.slice(term_idx - 40, term_idx + 40) + '...';
 
                 return {link: r.url, title: r.title, detail: detail};
             });
@@ -94,31 +108,38 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             that.set('results', results);
             resetPagination(that);
 
-        }, function(resp) {
+        }).fail(function(resp) {
             // error response
         });
     }
 
-    function doSuggestions(that, term) {
-        $.ajax({
-            url: `https://devbranch.search.openstack.org/api/public/v1/suggestions/www-openstack/${term}`,
+    var xhr = null;
+
+    function doSuggestions(that) {
+        if ( xhr ) xhr.abort();
+        var term = that.get('term');
+
+        xhr = $.ajax({
+            url: 'https://'+that.baseUrl+'/api/public/v1/suggestions/'+that.context+'/'+term,
             dataType: "json"
-        }).then(function(resp) {
-            let results = resp.results.map(r => {
+        }).done(function(resp) {
+            var results = resp.results.map(function(r) {
                 return {link: r.payload, title: r.term};
             });
-
+            xhr = null;
             that.set('suggestions', results);
-        }, function(resp) {
+
+        }).fail(function(resp) {
             // error response
         });
     }
 
     function resetPagination(that) {
-        let {perPage, total} = that.get();
-        let totalPages = Math.ceil(total / perPage);
-        let lastPage = (totalPages < 5) ? totalPages : 5;
-        let newPagesToShow = [];
+        var total = that.get('total');
+        var perPage = that.get('perPage');
+        var totalPages = Math.ceil(total / perPage);
+        var lastPage = (totalPages < 5) ? totalPages : 5;
+        var newPagesToShow = [];
 
         for( var i = 1; i <= lastPage; i++) {
             newPagesToShow.push(i);
@@ -129,24 +150,26 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
     }
 
     function changePagination(that, newPage) {
-        let {pagesToShow, perPage, total} = that.get();
-        let lastPage = pagesToShow[pagesToShow.length - 1];
-        let firstPage = pagesToShow[0];
-        let totalPages = Math.ceil(total / perPage);
-        let newPagesToShow = [];
+        var total = that.get('total');
+        var pagesToShow = that.get('pagesToShow');
+        var perPage = that.get('perPage');
+        var lastPage = pagesToShow[pagesToShow.length - 1];
+        var firstPage = pagesToShow[0];
+        var totalPages = Math.ceil(total / perPage);
+        var newPagesToShow = [];
 
         this.set('page', newPage);
 
         // change results
-        let newResultLimit = (newPage * perPage);
+        var newResultLimit = (newPage * perPage);
         newResultLimit = (newResultLimit > total) ? total : newResultLimit;
         that.set('fromResult', ((newPage - 1) * perPage) + 1);
         that.set('toResult', newResultLimit);
 
         // change pagination
         if (newPage > lastPage - 2 || newPage < firstPage + 2) {
-            let pageFrom = newPage - 2;
-            let pageTo = newPage + 2;
+            var pageFrom = newPage - 2;
+            var pageTo = newPage + 2;
             newPagesToShow = []
 
             if (pageTo > totalPages) {
@@ -164,6 +187,6 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         }
     }
 
-    return app;
+    return search_widget;
 
 });

@@ -25,8 +25,11 @@
 .ossw-search-suggestions {
 	border: 1px solid #DDDDDD;
 	padding: 5px;
-	position: relative;
-	top: 20px;
+	position: absolute;
+	top: 50px;
+	z-index: 9999;
+	background: white;
+	width: 100%;
 }
 
 .ossw-result-item {

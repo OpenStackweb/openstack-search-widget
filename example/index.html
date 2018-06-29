@@ -6,16 +6,22 @@
 </head>
 <body>
 <h1>Embedded widget test</h1>
-<div id="openstack-search-bar" style="width: 500px"></div>
+<div id="openstack-search-bar" data-baseUrl="devbranch.search.openstack.org" data-context="www-openstack"></div>
 <script>
 (function (window, document) {
-  var loader = function () {
-    var script = document.createElement("script"), tag = document.getElementsByTagName("script")[0];
-    script.src = "./../embed.min.js";
-    tag.parentNode.insertBefore(script, tag);
-  };
-  window.addEventListener ? window.addEventListener("load", loader, false) : window.attachEvent("onload", loader);
+	var loader = function () {
+		var script = document.createElement("script"), tag = document.getElementsByTagName("script")[0];
+		script.src = "./../embed.min.js";
+		tag.parentNode.insertBefore(script, tag);
+	};
+
+	window.addEventListener ? window.addEventListener("load", loader, false) : window.attachEvent("onload", loader);
+
 })(window, document);
+</script>
+
+<script>
+
 </script>
 </body>
 </html>
