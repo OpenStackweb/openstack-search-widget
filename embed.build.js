@@ -1,6 +1,6 @@
 ({
   mainConfigFile: "config.js",
-  optimize: 'none',
+  optimize: 'uglify2',
   name: "node_modules/almond/almond", // assumes a production build using almond
   include: ['embed'],
   out: "embed.min.js",
