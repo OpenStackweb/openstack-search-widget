@@ -39,6 +39,13 @@
 	color: #30739C;
 }
 
+.ossw-no-results {
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	color: #8B9BAD;
+}
+
 .ossw-search-suggestions {
 	display: none;
 	border: 1px solid #DDDDDD;

@@ -51,7 +51,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                         if ( xhr_suggestions ) xhr_suggestions.abort();
                         if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
 
-                        doSearch(that);
+                        doSearch(that, true);
                         $('.ossw-search-results').show();
                         $('.ossw-search-suggestions').hide();
                         $('.ossw-suggestions-wrapper').hide();
@@ -68,8 +68,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     ev.original.preventDefault();
 
                     if(ev.original.keyCode == 13) {
-                        doSearch(that);
-                        resetPagination(that);
+                        doSearch(that, true);
                         $('.ossw-suggestions-wrapper').hide();
                     } else {
                         $('.ossw-suggestions-wrapper').show();
@@ -98,7 +97,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         }
     };
 
-    function doSearch(that) {
+    function doSearch(that, reset = false) {
         var term = that.get('term');
         var page = that.get('page');
         var perPage = that.get('perPage');
@@ -117,6 +116,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
             that.set('total', resp.qty);
             that.set('results', results);
+
+            if(reset) resetPagination(that);
 
         }).fail(function(resp) {
             // error response
@@ -155,6 +156,12 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
         that.set('page', 1);
         that.set('pagesToShow', newPagesToShow);
+
+        // change results
+        var newResultLimit = (perPage);
+        newResultLimit = (newResultLimit > total) ? total : newResultLimit;
+        that.set('fromResult', 1);
+        that.set('toResult', newResultLimit);
     }
 
     function changePagination(that, newPage) {

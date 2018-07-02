@@ -54,6 +54,7 @@
             <!-- FOOTER -->
             <div class="ossw-footer-wrapper">
                 <section class="ossw-footer">
+                    {{#if results.length}}
                     <span class="ossw-summary">
                         <div>
                             Showing <strong>{{fromResult}}</strong>–<strong>{{toResult}}</strong> of <strong>{{total}}</strong>
@@ -74,6 +75,11 @@
                             </a>
                         </div>
                     </span>
+                    {{ else }}
+                    <span class="ossw-summary">
+                        <div>No results found for “{{term}}”</div>
+                    </span>
+                    {{/if}}
                 </section>
             </div>
         </div>
