@@ -2,6 +2,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
     'use strict';
 
+    var xhr_suggestions = null;
+    var timeout_suggestions = null;
     var search_widget = {
         init: function (baseUrl, context) {
 
@@ -37,6 +39,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             this.ractive.on({
                 clear: function(ev) {
                     ev.original.preventDefault();
+                    $('.ossw-search-suggestions').hide();
                     this.set('term', '');
                 },
                 search: function(ev) {
@@ -45,12 +48,17 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     ev.original.preventDefault();
 
                     if(ev.original.keyCode == 13) {
+                        if ( xhr_suggestions ) xhr_suggestions.abort();
+                        if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
+
                         doSearch(that);
                         $('.ossw-search-results').show();
                         $('.ossw-search-suggestions').hide();
                         $('.ossw-suggestions-wrapper').hide();
                     } else {
-                        window.setTimeout(doSuggestions, 500, that);
+                        $('.ossw-search-suggestions').show();
+                        if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
+                        timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
                     }
                 },
                 searchPopup: function(ev) {
@@ -58,13 +66,15 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     var that = this;
 
                     ev.original.preventDefault();
-                    $('.ossw-suggestions-wrapper').show();
 
                     if(ev.original.keyCode == 13) {
                         doSearch(that);
+                        resetPagination(that);
                         $('.ossw-suggestions-wrapper').hide();
                     } else {
-                        window.setTimeout(doSuggestions, 500, that);
+                        $('.ossw-suggestions-wrapper').show();
+                        if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
+                        timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
                     }
                 },
                 closePopup: function(ev) {
@@ -74,11 +84,12 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     var total = this.get('total');
                     var perPage = this.get('perPage');
                     var totalPages = Math.ceil(total / perPage);
+                    var that = this;
 
                     ev.original.preventDefault();
                     if (newPage > totalPages || newPage < 1) return false;
 
-                    changePagination(that);
+                    changePagination(that, newPage);
                     doSearch(that);
                 }
             });
@@ -106,27 +117,24 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
             that.set('total', resp.qty);
             that.set('results', results);
-            resetPagination(that);
 
         }).fail(function(resp) {
             // error response
         });
     }
 
-    var xhr = null;
-
     function doSuggestions(that) {
-        if ( xhr ) xhr.abort();
+        if ( xhr_suggestions ) xhr_suggestions.abort();
         var term = that.get('term');
 
-        xhr = $.ajax({
+        xhr_suggestions = $.ajax({
             url: 'https://'+that.baseUrl+'/api/public/v1/suggestions/'+that.context+'/'+term,
             dataType: "json"
         }).done(function(resp) {
             var results = resp.results.map(function(r) {
                 return {link: r.payload, title: r.term};
             });
-            xhr = null;
+            xhr_suggestions = null;
             that.set('suggestions', results);
 
         }).fail(function(resp) {
@@ -158,7 +166,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         var totalPages = Math.ceil(total / perPage);
         var newPagesToShow = [];
 
-        this.set('page', newPage);
+        that.set('page', newPage);
 
         // change results
         var newResultLimit = (newPage * perPage);
@@ -167,17 +175,16 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         that.set('toResult', newResultLimit);
 
         // change pagination
-        if (newPage > lastPage - 2 || newPage < firstPage + 2) {
-            var pageFrom = newPage - 2;
-            var pageTo = newPage + 2;
+        if (newPage > lastPage - 1 || newPage < firstPage + 1) {
+            var pageFrom;
+            var pageTo = ((newPage + 2) < 5) ? 5 : (newPage + 2);
             newPagesToShow = []
 
             if (pageTo > totalPages) {
                 pageTo = totalPages;
             }
-            if (pageFrom < 1) {
-                pageFrom = 1;
-            }
+
+            pageFrom = ((pageTo - 4) < 1) ? 1 : (pageTo - 4);
 
             for( var i = pageFrom; i <= pageTo; i++) {
                 newPagesToShow.push(i);

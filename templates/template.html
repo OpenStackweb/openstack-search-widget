@@ -3,7 +3,6 @@
         <input value="{{term}}" on-keyup="search" type="text" id="search-bar-input" placeholder="Search OpenStack" />
         <i class="fa fa-times ossw-search-bar-close" on-click="clear"></i>
     </div>
-    {{#if suggestions.length}}
     <div class="ossw-search-suggestions">
         <div class="ossw-results">
             {{#suggestions}}
@@ -13,7 +12,6 @@
             {{/}}
         </div>
     </div>
-    {{/if}}
 
     <div class="ossw-search-results">
         <div class="ossw-overlay"></div>
@@ -69,7 +67,7 @@
                               <span class="ossw-right-arrow"> &lt; </span>
                             </a>
                             {{#each pagesToShow }}
-                                <a class="ossw-page-link {{# this == page}} active {{/}}" on-click="['changePage', this]" href="#">{{ this }}</a>
+                                <a class="ossw-page-link {{# this == page}} ossw-active {{/}}" on-click="['changePage', this]" href="#">{{ this }}</a>
                             {{/each}}
                             <a on-click="['changePage', page + 1]" class="ossw-page-link next" href="#">
                               <span class="ossw-right-arrow"> &gt; </span>

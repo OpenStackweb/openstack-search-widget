@@ -10,6 +10,19 @@
 	height: 37px;
 	padding: 0 0 0 10px;
 	background: #fff;
+	color: #30739C;
+	font-size: 12px;
+	text-transform: lowercase;
+	font-weight: 400;
+}
+
+#search-bar-input::placeholder {
+	color: #C7CAE0;
+}
+
+#search-bar-input:focus {
+	border-color: #30739C;
+	outline: none;
 }
 
 .ossw-search-bar-close {
@@ -22,7 +35,12 @@
 	font-size: 16px;
 }
 
+.ossw-search-bar-close:hover {
+	color: #30739C;
+}
+
 .ossw-search-suggestions {
+	display: none;
 	border: 1px solid #DDDDDD;
 	padding: 5px;
 	position: absolute;
