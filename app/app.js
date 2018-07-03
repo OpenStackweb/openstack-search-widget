@@ -89,7 +89,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                     if (newPage > totalPages || newPage < 1) return false;
 
                     changePagination(that, newPage);
-                    doSearch(that);
+                    doSearch(that, false);
                 }
             });
 
@@ -97,7 +97,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         }
     };
 
-    function doSearch(that, reset = false) {
+    function doSearch(that, reset) {
         var term = that.get('term');
         var page = that.get('page');
         var perPage = that.get('perPage');
