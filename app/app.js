@@ -13,9 +13,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             var $style = $("<style></style>", {type: "text/css"});
             $style.text(css);
 
-            $("head")
-                .append($style)
-                .append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" >');
+            $("head").append($style);
 
             $('.openstack-search-bar').each(function() {
 
