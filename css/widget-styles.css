@@ -158,9 +158,8 @@
 .ossw-search-results .ossw-container {
 	position: fixed;
 	top: 0;
-	left: 50%;
-	margin: 64px 0 0 -320px;
-	max-width: 640px;
+	left: 20%;
+	margin: 64px 0 0 0;
 	width: 60%;
 	height: 80%;
 	-webkit-box-sizing: border-box;
