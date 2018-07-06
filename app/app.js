@@ -17,81 +17,86 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                 .append($style)
                 .append('<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" >');
 
-            // render our main view
-            this.ractive = new Ractive({
-                el: 'openstack-search-bar',
-                baseUrl: baseUrl,
-                context: context,
-                template: mainTemplate,
-                data: {
-                    term: '',
-                    page: 1,
-                    perPage: 10,
-                    pagesToShow: [1,2,3,4,5],
-                    fromResult: 1,
-                    toResult: 10,
-                    total: 88,
-                    results: [],
-                    suggestions: []
-                }
+            $('.openstack-search-bar').each(function() {
+
+                var el = $(this);
+                // render our main view
+                this.ractive = new Ractive({
+                    el: el,
+                    baseUrl: baseUrl,
+                    context: context,
+                    template: mainTemplate,
+                    data: {
+                        term: '',
+                        page: 1,
+                        perPage: 10,
+                        pagesToShow: [1,2,3,4,5],
+                        fromResult: 1,
+                        toResult: 10,
+                        total: 88,
+                        results: [],
+                        suggestions: []
+                    }
+                });
+
+                this.ractive.on({
+                    clear: function(ev) {
+                        ev.original.preventDefault();
+                        $('.ossw-search-suggestions', el).hide();
+                        this.set('term', '');
+                    },
+                    search: function(ev) {
+                        var term = this.get('term');
+                        var that = this;
+                        ev.original.preventDefault();
+
+                        if(ev.original.keyCode == 13) {
+                            if ( xhr_suggestions ) xhr_suggestions.abort();
+                            if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
+
+                            doSearch(that, true);
+                            $('.ossw-search-results', el).show();
+                            $('.ossw-search-suggestions', el).hide();
+                            $('.ossw-suggestions-wrapper', el).hide();
+                        } else {
+                            $('.ossw-search-suggestions', el).show();
+                            if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
+                            timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
+                        }
+                    },
+                    searchPopup: function(ev) {
+                        var term = this.get('term');
+                        var that = this;
+
+                        ev.original.preventDefault();
+
+                        if(ev.original.keyCode == 13) {
+                            doSearch(that, true);
+                            $('.ossw-suggestions-wrapper', el).hide();
+                        } else {
+                            $('.ossw-suggestions-wrapper', el).show();
+                            if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
+                            timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
+                        }
+                    },
+                    closePopup: function(ev) {
+                        $('.ossw-search-results', el).hide();
+                    },
+                    changePage: function(ev, newPage) {
+                        var total = this.get('total');
+                        var perPage = this.get('perPage');
+                        var totalPages = Math.ceil(total / perPage);
+                        var that = this;
+
+                        ev.original.preventDefault();
+                        if (newPage > totalPages || newPage < 1) return false;
+
+                        changePagination(that, newPage);
+                        doSearch(that, false);
+                    }
+                });
             });
 
-            this.ractive.on({
-                clear: function(ev) {
-                    ev.original.preventDefault();
-                    $('.ossw-search-suggestions').hide();
-                    this.set('term', '');
-                },
-                search: function(ev) {
-                    var term = this.get('term');
-                    var that = this;
-                    ev.original.preventDefault();
-
-                    if(ev.original.keyCode == 13) {
-                        if ( xhr_suggestions ) xhr_suggestions.abort();
-                        if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
-
-                        doSearch(that, true);
-                        $('.ossw-search-results').show();
-                        $('.ossw-search-suggestions').hide();
-                        $('.ossw-suggestions-wrapper').hide();
-                    } else {
-                        $('.ossw-search-suggestions').show();
-                        if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
-                        timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
-                    }
-                },
-                searchPopup: function(ev) {
-                    var term = this.get('term');
-                    var that = this;
-
-                    ev.original.preventDefault();
-
-                    if(ev.original.keyCode == 13) {
-                        doSearch(that, true);
-                        $('.ossw-suggestions-wrapper').hide();
-                    } else {
-                        $('.ossw-suggestions-wrapper').show();
-                        if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
-                        timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
-                    }
-                },
-                closePopup: function(ev) {
-                    $('.ossw-search-results').hide();
-                },
-                changePage: function(ev, newPage) {
-                    var total = this.get('total');
-                    var perPage = this.get('perPage');
-                    var totalPages = Math.ceil(total / perPage);
-                    var that = this;
-
-                    ev.original.preventDefault();
-                    if (newPage > totalPages || newPage < 1) return false;
-
-                    changePagination(that, newPage);
-                    doSearch(that, false);
-                }
-            });
 
 
         }
