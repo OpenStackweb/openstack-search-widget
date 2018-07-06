@@ -375,3 +375,14 @@
 	height: 6px;
 	margin: 0 0 0 2px;
 }
+
+@media (max-width: 660px) {
+	.ossw-search-results .ossw-container {
+		width: 80%;
+		left: 10%;
+	}
+
+	.ossw-pagination .ossw-page-link:not(.ossw-active):not(.next) {
+		display: none !important;
+	}
+}
