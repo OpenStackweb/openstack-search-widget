@@ -348,6 +348,7 @@
 .ossw-search-results .ossw-footer-wrapper .ossw-footer .ossw-summary {
 	display: block;
 	position: absolute;
+	width: 65%;
 	top: 18px;
 	left: 16px;
 	float: left;
