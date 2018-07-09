@@ -158,10 +158,10 @@
 .ossw-search-results .ossw-container {
 	position: fixed;
 	top: 0;
-	left: 20%;
 	margin: 64px 0 0 0;
 	width: 60%;
 	height: 80%;
+	max-width: 800px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -181,10 +181,6 @@
 }
 
 @media (max-width: 660px) {
-	.ossw-search-results .ossw-container {
-		left: 10%;
-	}
-
 	.ossw-pagination .ossw-page-link:not(.ossw-active):not(.next) {
 		display: none !important;
 	}

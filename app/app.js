@@ -53,9 +53,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                             if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
 
                             doSearch(that, true);
-                            $('.ossw-search-results', el).show();
-                            $('.ossw-search-suggestions', el).hide();
-                            $('.ossw-suggestions-wrapper', el).hide();
+                            centerPopup(el);
+
                         } else {
                             $('.ossw-search-suggestions', el).show();
                             if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
@@ -202,6 +201,26 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
             that.set('pagesToShow', newPagesToShow);
         }
+    }
+
+    function centerPopup(el) {
+        var winW = $(window).width();
+        var newPopWidth = winW * 0.8;
+        var popMaxWidth = parseInt($('.ossw-container', el).css('max-width').slice(0, -2));
+
+        $('.ossw-search-results', el).show();
+        $('.ossw-search-suggestions', el).hide();
+        $('.ossw-suggestions-wrapper', el).hide();
+
+        if (newPopWidth < popMaxWidth) {
+            $('.ossw-container', el).css('left', winW*0.1);
+            $('.ossw-container', el).css('width', winW*0.8);
+        } else {
+            var halfWin = winW / 2;
+            var halfPop = popMaxWidth / 2;
+            $('.ossw-container', el).css('left', (halfWin - halfPop) );
+        }
+
     }
 
     return search_widget;
