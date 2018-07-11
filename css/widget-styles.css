@@ -46,8 +46,11 @@
 	color: #8B9BAD;
 }
 
-.ossw-search-suggestions {
+.ossw-search-suggestions-wrapper {
 	display: none;
+}
+
+.ossw-search-suggestions {
 	border: 1px solid #DDDDDD;
 	padding: 5px;
 	position: relative;

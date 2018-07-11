@@ -5,10 +5,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
     var xhr_suggestions = null;
     var timeout_suggestions = null;
     var search_widget = {
-        init: function (baseUrl, context) {
-
-            baseUrl = baseUrl ? baseUrl : 'devbranch.search.openstack.org';
-            context = context ? context : 'www-openstack';
+        init: function (z) {
 
             var $style = $("<style></style>", {type: "text/css"});
             $style.text(css);
@@ -18,6 +15,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             $('.openstack-search-bar').each(function() {
 
                 var el = $(this);
+                var baseUrl = el.data('baseurl') ? el.data('baseurl') : 'devbranch.search.openstack.org';
+                var context = el.data('context') ? el.data('context') : 'www-openstack';
                 // render our main view
                 this.ractive = new Ractive({
                     el: el,
@@ -40,11 +39,10 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                 this.ractive.on({
                     clear: function(ev) {
                         ev.original.preventDefault();
-                        $('.ossw-search-suggestions', el).hide();
+                        $('.ossw-search-suggestions-wrapper', el).hide();
                         this.set('term', '');
                     },
                     search: function(ev) {
-                        var term = this.get('term');
                         var that = this;
                         ev.original.preventDefault();
 
@@ -56,13 +54,12 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                             centerPopup(el);
 
                         } else {
-                            $('.ossw-search-suggestions', el).show();
+                            $('.ossw-search-suggestions-wrapper', el).show();
                             if ( timeout_suggestions ) clearTimeout(timeout_suggestions);
                             timeout_suggestions = window.setTimeout(doSuggestions, 500, that);
                         }
                     },
                     searchPopup: function(ev) {
-                        var term = this.get('term');
                         var that = this;
 
                         ev.original.preventDefault();
@@ -209,8 +206,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
         var popMaxWidth = parseInt($('.ossw-container', el).css('max-width').slice(0, -2));
 
         $('.ossw-search-results', el).show();
-        $('.ossw-search-suggestions', el).hide();
         $('.ossw-suggestions-wrapper', el).hide();
+        $('.ossw-search-suggestions-wrapper', el).hide();
 
         if (newPopWidth < popMaxWidth) {
             $('.ossw-container', el).css('left', winW*0.1);

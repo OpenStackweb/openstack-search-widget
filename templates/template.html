@@ -3,14 +3,18 @@
         <input value="{{term}}" on-keyup="search" type="text" id="search-bar-input" placeholder="Search OpenStack" />
         <i class="fa fa-times ossw-search-bar-close" on-click="clear"></i>
     </div>
-    <div class="ossw-search-suggestions">
-        <div class="ossw-results">
-            {{#suggestions}}
-            <a href="{{link}}" class="ossw-result-item" >
-                <div class="ossw-result-heading"> {{{title}}} </div>
-            </a>
-            {{/}}
+    <div class="ossw-search-suggestions-wrapper">
+    {{#if suggestions.length}}
+        <div class="ossw-search-suggestions">
+            <div class="ossw-results">
+                {{#suggestions}}
+                <a href="{{link}}" class="ossw-result-item" >
+                    <div class="ossw-result-heading"> {{{title}}} </div>
+                </a>
+                {{/}}
+            </div>
         </div>
+    {{/if}}
     </div>
 
     <div class="ossw-search-results">
