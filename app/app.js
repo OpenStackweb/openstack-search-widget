@@ -2,6 +2,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
 
     'use strict';
 
+    $.noConflict();
+
     var xhr_suggestions = null;
     var timeout_suggestions = null;
     var search_widget = {
@@ -11,6 +13,8 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             $style.text(css);
 
             $("head").append($style);
+
+            Ractive.DEBUG = /unminified/.test(function(){/*unminified*/});
 
             $('.openstack-search-bar').each(function() {
 
