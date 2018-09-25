@@ -4,7 +4,7 @@ Search Bar embedded widget using [RequireJS](http://requirejs.org) and [Ractive.
 
 ## Building the widget
 
-Assuming RequireJS and bower are already installed:
+Assuming RequireJS is already installed:
 
 ```console
 $ make init

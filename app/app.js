@@ -3,7 +3,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
     'use strict';
 
     $.noConflict();
-
+    var MAX_DETAIL_LEN = 100;
     var xhr_suggestions = null;
     var timeout_suggestions = null;
     var search_widget = {
@@ -19,7 +19,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             $('.openstack-search-bar').each(function() {
 
                 var el = $(this);
-                var baseUrl = el.data('baseurl') ? el.data('baseurl') : 'devbranch.search.openstack.org';
+                var baseUrl = el.data('baseurl') ? el.data('baseurl') : 'search.openstack.org';
                 var context = el.data('context') ? el.data('context') : 'www-openstack';
                 // render our main view
                 this.ractive = new Ractive({
@@ -111,10 +111,10 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             dataType: "json"
         }).done(function(resp) {
             var results = resp.results.map(function(r) {
-                var term_idx = r.content.toLowerCase().indexOf(term.toLowerCase());
-                var detail = '...' + r.content.slice(term_idx - 40, term_idx + 40) + '...';
-
-                return {link: r.url, title: r.title, detail: detail};
+                var detail = r.hasOwnProperty('meta_description') ? r.meta_description : r.content;
+                detail = detail.length > MAX_DETAIL_LEN  ? detail.substring(0, MAX_DETAIL_LEN) + '...' : detail;
+                var title = r.hasOwnProperty('meta_title') ? r.meta_title : r.title;
+                return {link: r.url, title: title, detail: detail};
             });
 
             that.set('total', resp.qty);

@@ -9,8 +9,8 @@
   "dependencies": {
     "almond": "^0.3.3",
     "jquery": "^3.3.1",
-    "ractive": "^0.10.3",
-    "requirejs": "^2.3.5",
+    "ractive": "^0.10.9",
+    "requirejs": "^2.3.6",
     "requirejs-text": "^2.0.15",
     "rv": "^0.1.8",
     "rvc": "^0.5.0"
