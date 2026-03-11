@@ -1,9 +1,8 @@
-define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.css'], function ($, Ractive, mainTemplate, css) {
+define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.css', 'app/helpers'], function ($, Ractive, mainTemplate, css, helpers) {
 
     'use strict';
 
     $.noConflict();
-    var MAX_DETAIL_LEN = 100;
     var xhr_suggestions = null;
     var timeout_suggestions = null;
     var search_widget = {
@@ -89,7 +88,7 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
                         ev.original.preventDefault();
                         if (newPage > totalPages || newPage < 1) return false;
 
-                        changePagination(that, newPage);
+                        helpers.changePagination(that, newPage);
                         doSearch(that, false);
                     }
                 });
@@ -110,17 +109,12 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             url: url + '/'+term+'?page='+page+'&page_size='+perPage,
             dataType: "json"
         }).done(function(resp) {
-            var results = resp.results.map(function(r) {
-                var detail = r.hasOwnProperty('meta_description') ? r.meta_description : r.content;
-                detail = detail.length > MAX_DETAIL_LEN  ? detail.substring(0, MAX_DETAIL_LEN) + '...' : detail;
-                var title = r.hasOwnProperty('meta_title') ? r.meta_title : r.title;
-                return {link: r.url, title: title, detail: detail};
-            });
+            var results = helpers.mapSearchResults(resp.results);
 
             that.set('total', resp.qty);
             that.set('results', results);
 
-            if(reset) resetPagination(that);
+            if(reset) helpers.resetPagination(that);
 
         }).fail(function(resp) {
             // error response
@@ -135,73 +129,13 @@ define(['jquery', 'ractive', 'rv!templates/template', 'text!css/widget-styles.cs
             url: 'https://'+that.baseUrl+'/api/public/v1/suggestions/'+that.context+'/'+term,
             dataType: "json"
         }).done(function(resp) {
-            var results = resp.results.map(function(r) {
-                return {link: r.payload, title: r.term};
-            });
+            var results = helpers.mapSuggestions(resp.results);
             xhr_suggestions = null;
             that.set('suggestions', results);
 
         }).fail(function(resp) {
             // error response
         });
-    }
-
-    function resetPagination(that) {
-        var total = that.get('total');
-        var perPage = that.get('perPage');
-        var totalPages = Math.ceil(total / perPage);
-        var lastPage = (totalPages < 5) ? totalPages : 5;
-        var newPagesToShow = [];
-
-        for( var i = 1; i <= lastPage; i++) {
-            newPagesToShow.push(i);
-        }
-
-        that.set('page', 1);
-        that.set('pagesToShow', newPagesToShow);
-
-        // change results
-        var newResultLimit = (perPage);
-        newResultLimit = (newResultLimit > total) ? total : newResultLimit;
-        that.set('fromResult', 1);
-        that.set('toResult', newResultLimit);
-    }
-
-    function changePagination(that, newPage) {
-        var total = that.get('total');
-        var pagesToShow = that.get('pagesToShow');
-        var perPage = that.get('perPage');
-        var lastPage = pagesToShow[pagesToShow.length - 1];
-        var firstPage = pagesToShow[0];
-        var totalPages = Math.ceil(total / perPage);
-        var newPagesToShow = [];
-
-        that.set('page', newPage);
-
-        // change results
-        var newResultLimit = (newPage * perPage);
-        newResultLimit = (newResultLimit > total) ? total : newResultLimit;
-        that.set('fromResult', ((newPage - 1) * perPage) + 1);
-        that.set('toResult', newResultLimit);
-
-        // change pagination
-        if (newPage > lastPage - 1 || newPage < firstPage + 1) {
-            var pageFrom;
-            var pageTo = ((newPage + 2) < 5) ? 5 : (newPage + 2);
-            newPagesToShow = []
-
-            if (pageTo > totalPages) {
-                pageTo = totalPages;
-            }
-
-            pageFrom = ((pageTo - 4) < 1) ? 1 : (pageTo - 4);
-
-            for( var i = pageFrom; i <= pageTo; i++) {
-                newPagesToShow.push(i);
-            }
-
-            that.set('pagesToShow', newPagesToShow);
-        }
     }
 
     function centerPopup(el) {
